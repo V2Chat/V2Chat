@@ -1,5 +1,17 @@
-// Initialize empty chat messages array
-let chatMessages = [];
+// Initialize WebSocket connection
+const socket = new WebSocket('ws://localhost:3000');
+
+// Function to handle WebSocket connection established
+socket.onopen = () => {
+  console.log('WebSocket connection established.');
+};
+
+// Function to handle WebSocket received messages
+socket.onmessage = event => {
+  const chatMessage = JSON.parse(event.data);
+  chatMessages.push(chatMessage);
+  displayChatMessages();
+};
 
 // Function to handle sending a message
 function sendMessage() {
@@ -15,15 +27,12 @@ function sendMessage() {
       message: message
     };
 
-    // Add message to chat messages array
-    chatMessages.push(chatMessage);
+    // Send message through WebSocket
+    socket.send(JSON.stringify(chatMessage));
 
     // Clear input fields
     messageInput.value = '';
     messageInput.focus();
-
-    // Display updated chat messages
-    displayChatMessages();
   }
 }
 
